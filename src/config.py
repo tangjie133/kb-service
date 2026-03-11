@@ -8,7 +8,7 @@ from typing import Optional
 class Settings(BaseSettings):
     # GitHub 配置
     # 示例: tangjie133/knowledge-base
-    GITHUB_REPO: str = ""
+    GITHUB_REPO: str = "tangjie133/knowledge-base"
     GITHUB_TOKEN: Optional[str] = None
     SYNC_INTERVAL: int = 300  # 5分钟同步一次
     

@@ -59,9 +59,14 @@ ollama pull qwen2.5
 知识库可以存放在：
 
 **方式 A: GitHub 仓库（推荐）**
+
+示例知识库：https://github.com/tangjie133/knowledge-base
+
 ```bash
-# 创建独立的知识库仓库
-git clone https://github.com/yourname/knowledge-base.git
+# 克隆示例知识库
+git clone https://github.com/tangjie133/knowledge-base.git
+
+# 或者创建自己的知识库仓库
 ```
 
 **方式 B: 本地文件夹**
