@@ -17,6 +17,9 @@ COPY src/ ./src/
 # Create data directory
 RUN mkdir -p /app/data
 
+# Set Python path
+ENV PYTHONPATH=/app
+
 # Expose port
 EXPOSE 8000
 

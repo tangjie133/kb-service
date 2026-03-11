@@ -9,12 +9,12 @@ from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-from config import settings
-from github_sync import GitHubSync
-from document_processor import DocumentProcessor
-from embedding_service import OllamaEmbedding
-from vector_store import VectorStore
-from llm_service import OllamaLLM
+from .config import settings
+from .github_sync import GitHubSync
+from .document_processor import DocumentProcessor
+from .embedding_service import OllamaEmbedding
+from .vector_store import VectorStore
+from .llm_service import OllamaLLM
 
 # Setup logging
 logging.basicConfig(

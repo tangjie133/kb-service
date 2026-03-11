@@ -4,7 +4,7 @@
 import chromadb
 from chromadb.config import Settings
 from typing import List, Dict, Optional
-from document_processor import DocumentChunk
+from .document_processor import DocumentChunk
 import logging
 
 logger = logging.getLogger(__name__)
