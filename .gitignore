@@ -50,3 +50,14 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+# KB Service specific
+.chroma_db/
+knowledge.bak/
+*.bak
+src/*.bak
+data/vector_db/
+__pycache__/
+*.pyc
+*.log
+nohup.out

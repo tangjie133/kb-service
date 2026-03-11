@@ -24,8 +24,14 @@ class OllamaEmbedding:
             response = requests.get(f"{self.host}/api/tags", timeout=5)
             if response.status_code == 200:
                 models = response.json().get("models", [])
-                model_names = [m["name"] for m in models]
-                if self.model not in model_names:
+                # Check if model exists (support both exact and partial match)
+                model_found = False
+                for m in models:
+                    if m["name"].startswith(self.model):
+                        model_found = True
+                        break
+                
+                if not model_found:
                     logger.warning(f"Model {self.model} not found in Ollama. Run: ollama pull {self.model}")
                 else:
                     logger.info(f"Ollama connected, model {self.model} available")

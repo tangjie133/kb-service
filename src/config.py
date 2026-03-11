@@ -12,6 +12,11 @@ class Settings(BaseSettings):
     GITHUB_TOKEN: Optional[str] = None
     SYNC_INTERVAL: int = 300  # 5分钟同步一次
     
+    # Proxy 配置
+    HTTP_PROXY: Optional[str] = None
+    HTTPS_PROXY: Optional[str] = None
+    ALL_PROXY: Optional[str] = None
+    
     # 本地知识库路径 (如果设置，优先使用本地路径)
     LOCAL_KNOWLEDGE_PATH: Optional[str] = "./knowledge"
     
@@ -34,7 +39,7 @@ class Settings(BaseSettings):
     
     # 检索配置
     TOP_K: int = 5
-    SIMILARITY_THRESHOLD: float = 0.7
+    SIMILARITY_THRESHOLD: float = 0.5
     
     class Config:
         env_file = ".env"

@@ -11,6 +11,14 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJECT_DIR"
 
+# Load proxy settings from .env if exists
+if [ -f ".env" ]; then
+    export $(grep -E '^(HTTP_PROXY|HTTPS_PROXY|ALL_PROXY)=' .env | xargs)
+    if [ -n "$HTTP_PROXY" ]; then
+        echo "Using proxy: $HTTP_PROXY"
+    fi
+fi
+
 # Check virtual environment
 if [ -z "$VIRTUAL_ENV" ]; then
     if [ -d "$PROJECT_DIR/venv" ]; then
@@ -46,6 +54,23 @@ fi
 # Create directories
 mkdir -p data/vector_db
 mkdir -p knowledge
+
+# Check/Clone knowledge base
+echo "Checking knowledge base..."
+if [ ! -d "knowledge/.git" ]; then
+    echo "Knowledge base not found, cloning from GitHub..."
+    rm -rf knowledge
+    # Use proxy if configured
+    if [ -n "$ALL_PROXY" ]; then
+        git config --global http.proxy "$HTTP_PROXY"
+        git config --global https.proxy "$HTTPS_PROXY"
+    fi
+    git clone https://github.com/tangjie133/knowledge-base.git knowledge
+    echo "Knowledge base cloned successfully"
+else
+    echo "Knowledge base exists, pulling latest updates..."
+    cd knowledge && git pull && cd ..
+fi
 
 # Set Python path (for non-venv installs)
 export PYTHONPATH="${PROJECT_DIR}:${PYTHONPATH}"

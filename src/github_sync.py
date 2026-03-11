@@ -3,6 +3,7 @@
 
 import git
 import shutil
+import os
 from pathlib import Path
 from typing import List, Optional, Callable
 import logging
@@ -10,6 +11,20 @@ import time
 import threading
 
 logger = logging.getLogger(__name__)
+
+
+def _get_env_proxy() -> dict:
+    """Get proxy settings from environment"""
+    proxy_config = {}
+    http_proxy = os.environ.get('HTTP_PROXY') or os.environ.get('http_proxy')
+    https_proxy = os.environ.get('HTTPS_PROXY') or os.environ.get('https_proxy')
+    
+    if http_proxy:
+        proxy_config['http.proxy'] = http_proxy
+    if https_proxy:
+        proxy_config['https.proxy'] = https_proxy
+    
+    return proxy_config
 
 
 class GitHubSync:
@@ -57,12 +72,26 @@ class GitHubSync:
             shutil.rmtree(self.local_path)
         
         self.local_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Apply proxy settings
+        proxy_config = _get_env_proxy()
+        if proxy_config:
+            for key, value in proxy_config.items():
+                git.Git().config(key, value)
+                logger.debug(f"Set git config {key}={value}")
+        
         git.Repo.clone_from(self.repo_url, self.local_path)
         logger.info("Clone completed")
     
     def _pull(self) -> List[Path]:
         """Pull updates"""
         logger.info(f"Pulling updates from {self.repo_url}")
+        
+        # Apply proxy settings before pull
+        proxy_config = _get_env_proxy()
+        if proxy_config:
+            for key, value in proxy_config.items():
+                git.Git().config(key, value)
         
         repo = git.Repo(self.local_path)
         

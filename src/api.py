@@ -4,6 +4,7 @@
 import asyncio
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException
@@ -65,11 +66,11 @@ async def lifespan(app: FastAPI):
         model=settings.LLM_MODEL
     )
     
-    # Initial sync
+    # Initial sync - BLOCKING (important for first start)
     logger.info("Performing initial sync...")
     await asyncio.to_thread(initial_sync)
     
-    # Start background sync
+    # Start background sync after initial sync completes
     sync.start_watch(on_files_changed, settings.SYNC_INTERVAL)
     
     logger.info("KB Service ready!")
@@ -82,9 +83,16 @@ async def lifespan(app: FastAPI):
 
 def initial_sync():
     """Initial sync and processing"""
-    changed = sync.sync()
-    if changed or vector_store.get_stats()["total_documents"] == 0:
+    import os
+    # 如果知识库目录存在且有文件，直接索引，不 sync
+    kb_path = Path("./knowledge")
+    if kb_path.exists() and any(kb_path.iterdir()):
+        logger.info("Knowledge base exists locally, indexing...")
         process_all_files()
+    else:
+        changed = sync.sync()
+        if changed or vector_store.get_stats()["total_documents"] == 0:
+            process_all_files()
 
 
 def on_files_changed(changed_files: List):
