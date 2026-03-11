@@ -16,12 +16,18 @@ class GitHubSync:
     """Sync knowledge base from GitHub"""
     
     def __init__(self, repo_url: str, local_path: str, token: Optional[str] = None):
-        self.repo_url = repo_url
         self.local_path = Path(local_path)
         self.token = token
         
+        # Ensure repo_url is complete
+        if not repo_url.startswith(('http://', 'https://', 'git@')):
+            # Convert short form (user/repo) to full URL
+            repo_url = f"https://github.com/{repo_url}"
+        
+        self.repo_url = repo_url
+        
         # Add token to URL if provided
-        if token and "github.com" in repo_url:
+        if token and "github.com" in repo_url and repo_url.startswith('https://'):
             self.repo_url = repo_url.replace(
                 "https://github.com/",
                 f"https://{token}@github.com/"
