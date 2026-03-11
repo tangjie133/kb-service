@@ -54,7 +54,25 @@ ollama pull nomic-embed-text
 ollama pull qwen2.5
 ```
 
-### 2. 配置 KB Service
+### 2. 准备知识库
+
+知识库可以存放在：
+
+**方式 A: GitHub 仓库（推荐）**
+```bash
+# 创建独立的知识库仓库
+git clone https://github.com/yourname/knowledge-base.git
+```
+
+**方式 B: 本地文件夹**
+```bash
+mkdir -p knowledge
+# 把你的文档放在 knowledge/ 文件夹下
+```
+
+支持的格式：`.md`, `.txt`, `.pdf`, `.docx`
+
+### 3. 配置 KB Service
 
 ```bash
 # 克隆仓库
@@ -63,7 +81,13 @@ cd kb-service
 
 # 配置环境变量
 cp .env.example .env
-# 编辑 .env 文件，设置你的 GitHub 仓库
+
+# 编辑 .env 文件
+# 方式 A: 使用 GitHub 仓库
+GITHUB_REPO=yourname/knowledge-base
+
+# 方式 B: 使用本地文件夹
+LOCAL_KNOWLEDGE_PATH=./knowledge
 ```
 
 ### 3. 启动服务

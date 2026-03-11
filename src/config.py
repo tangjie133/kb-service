@@ -7,9 +7,13 @@ from typing import Optional
 
 class Settings(BaseSettings):
     # GitHub 配置
-    GITHUB_REPO: str = "tangjie133/knowledge-base"
+    # 示例: tangjie133/knowledge-base
+    GITHUB_REPO: str = ""
     GITHUB_TOKEN: Optional[str] = None
     SYNC_INTERVAL: int = 300  # 5分钟同步一次
+    
+    # 本地知识库路径 (如果设置，优先使用本地路径)
+    LOCAL_KNOWLEDGE_PATH: Optional[str] = "./knowledge"
     
     # Ollama 配置
     OLLAMA_HOST: str = "http://localhost:11434"
