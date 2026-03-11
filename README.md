@@ -77,37 +77,68 @@ mkdir -p knowledge
 
 支持的格式：`.md`, `.txt`, `.pdf`, `.docx`
 
-### 3. 配置 KB Service
+### 3. 安装依赖（使用虚拟环境）
+
+**推荐使用 Python 虚拟环境，避免依赖冲突：**
 
 ```bash
-# 克隆仓库
+# 克隆 KB Service
 git clone https://github.com/tangjie133/kb-service.git
 cd kb-service
 
-# 配置环境变量
+# 创建虚拟环境
+python3 -m venv venv
+
+# 激活虚拟环境
+source venv/bin/activate
+
+# 安装依赖（这可能需要几分钟）
+pip install -r requirements.txt
+
+# 验证安装
+python -c "import fastapi; import chromadb; print('✅ 安装成功')"
+```
+
+**注意**：如果遇到 NumPy 版本错误，请确保安装的是 numpy 1.26.4（已在 requirements.txt 中指定）
+
+### 5. 配置环境变量
+
+```bash
+# 复制配置模板
 cp .env.example .env
 
-# 编辑 .env 文件
+# 编辑 .env 文件，选择知识库来源
+vim .env
+
 # 方式 A: 使用 GitHub 仓库
-GITHUB_REPO=yourname/knowledge-base
+GITHUB_REPO=tangjie133/knowledge-base
 
 # 方式 B: 使用本地文件夹
 LOCAL_KNOWLEDGE_PATH=./knowledge
 ```
 
-### 3. 启动服务
+### 6. 启动服务
+
+**确保在虚拟环境中运行：**
 
 ```bash
-# 安装依赖
-pip install -r requirements.txt
+# 激活虚拟环境（如果还没激活）
+source venv/bin/activate
 
 # 启动服务
 ./scripts/start.sh
 ```
 
+或使用 Python 直接运行：
+
+```bash
+source venv/bin/activate
+python -m src.api
+```
+
 服务将在 http://localhost:8000 启动
 
-### 4. 测试 API
+### 7. 测试 API
 
 ```bash
 # 查询知识库
@@ -225,6 +256,61 @@ kb = KBClient("http://localhost:8000")
 # 查询
 result = kb.query_sync("传感器问题")
 print(result["answer"])
+```
+
+## 常见问题
+
+### ModuleNotFoundError: No module named 'fastapi'
+
+**原因**：没有安装依赖或在虚拟环境外运行
+
+**解决**：
+```bash
+# 确保在虚拟环境中
+cd kb-service
+source venv/bin/activate
+
+# 重新安装依赖
+pip install -r requirements.txt
+
+# 然后启动
+./scripts/start.sh
+```
+
+### AttributeError: `np.float_` was removed in the NumPy 2.0 release
+
+**原因**：ChromaDB 与 NumPy 2.0 不兼容
+
+**解决**：已固定在 requirements.txt 中使用 numpy 1.26.4
+```bash
+pip install "numpy==1.26.4" --force-reinstall
+```
+
+### 如何退出虚拟环境？
+
+```bash
+deactivate
+```
+
+### 如何重新进入虚拟环境？
+
+```bash
+cd kb-service
+source venv/bin/activate
+```
+
+### 服务启动后如何后台运行？
+
+```bash
+# 使用 nohup
+source venv/bin/activate
+nohup python -m src.api > kb-service.log 2>&1 &
+
+# 或使用 screen/tmux
+screen -S kb-service
+source venv/bin/activate
+python -m src.api
+# Ctrl+A+D  detach
 ```
 
 ## 许可证
