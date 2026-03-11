@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     # Ollama 配置
     OLLAMA_HOST: str = "http://localhost:11434"
     EMBEDDING_MODEL: str = "nomic-embed-text"
-    LLM_MODEL: str = "qwen2.5"
+    LLM_MODEL: str = "qwen2.5-coder:32b"
     
     # 向量数据库配置
     VECTOR_DB_PATH: str = "./data/vector_db"
