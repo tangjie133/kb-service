@@ -36,8 +36,8 @@ class GitHubSync:
                 return self._pull()
             else:
                 self._clone()
-                # First clone, all markdown files are new
-                return list(self.local_path.rglob("*.md"))
+                # First clone, all supported files are new
+                return self.get_knowledge_files()
         except Exception as e:
             logger.error(f"Sync failed: {e}")
             return []
@@ -75,22 +75,29 @@ class GitHubSync:
             logger.info("No updates")
             return []
         
-        # Get changed files
+        # Get changed files (support multiple formats)
         changed = repo.git.diff("--name-only", old_head, new_head)
+        supported_exts = ('.md', '.txt', '.pdf', '.docx')
         changed_files = [
             self.local_path / f.strip()
             for f in changed.split("\n")
-            if f.strip().endswith(".md")
+            if f.strip().lower().endswith(supported_exts)
         ]
         
         logger.info(f"Updated files: {len(changed_files)}")
         return changed_files
     
     def get_knowledge_files(self) -> List[Path]:
-        """Get all markdown files"""
+        """Get all supported knowledge files"""
         if not self.local_path.exists():
             return []
-        return list(self.local_path.rglob("*.md"))
+        
+        # Support multiple file types
+        extensions = ['*.md', '*.txt', '*.pdf', '*.docx']
+        files = []
+        for ext in extensions:
+            files.extend(self.local_path.rglob(ext))
+        return files
     
     def start_watch(self, callback: Callable, interval: int = 300):
         """
