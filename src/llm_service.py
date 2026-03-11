@@ -36,13 +36,15 @@ class OllamaLLM:
 回答要简洁、准确、有帮助。"""
         
         try:
+            # Combine system prompt and user prompt
+            full_prompt = f"{system_prompt}\n\n{prompt}"
+            
             response = requests.post(
                 self.generate_url,
                 json={
                     "model": self.model,
-                    "system": system_prompt,
-                    "prompt": prompt,
-                    "stream": stream,
+                    "prompt": full_prompt,
+                    "stream": False,
                     "options": {
                         "temperature": 0.3,
                         "num_predict": 2048
